@@ -1,24 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import Button from "./components/Button";
+import Card from "./components/Card";
+import Navbar from "./components/Navbar";
 
 function App() {
+  const [character, setcharacter] = useState([]);
+
+  const [info, setinfo] = useState({});
+
+  const url = "https://rickandmortyapi.com/api/character";
+
+  const fetchCharters = (url) => {
+    fetch(url)
+      .then((response) => response.json())
+      .then((json) => {
+        setcharacter(json.results)
+        setinfo(json.info)
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const onPrevius = () => {
+  fetchCharters(info.prev);
+}
+
+const onNext = () => {
+  fetchCharters(info.next);
+}
+
+  useEffect(() => {
+    fetchCharters(url);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar brand="Rick and morthy app"></Navbar>
+      <div className="container">
+        <Button prev={info.prev} next={info.next} onPrevius={onPrevius} onNext={onNext}></Button>
+        <Card character={character} />
+        <Button></Button>
+      </div>
+    </>
   );
 }
 
